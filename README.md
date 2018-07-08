@@ -1,3 +1,9 @@
+# Google Sheets → Calendar Connector
+
+A simple Node.JS application that uses REST APIs to update a Google calendar based on data from a Google sheet.
+
+It was written for a very specific use case (that of a spreadsheet used to track availability of volunteers for a code club) so it's unlikely to be generally useful, but it can hopefully serve as a reference or starting-point for anyone looking to do something similar.
+
 ### Setup ###
 
 Run `npm install` to install dependencies.
