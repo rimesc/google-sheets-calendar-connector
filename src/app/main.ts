@@ -70,7 +70,7 @@ async function processRow(row: TableRow, events: calendar.Event[], dryRun: boole
   const event = findMatchingEvent(events, row);
   if (event) {
     if (!sameVolunteers(row, event)) {
-      if (!dryRun) await updateEvent(event.id, row.volunteers);
+      if (!dryRun) await updateEvent(event, row.volunteers);
       console.debug('Updated event on ' + row.date.format('YYYY-MM-DD') + ' with ' + row.volunteers);
     }
   }
@@ -98,11 +98,11 @@ async function addEvent(date: moment.Moment, volunteers: string[]): Promise<cale
   });
 }
 
-async function updateEvent(eventId: string, volunteers: string[]): Promise<calendar.Event> {
+async function updateEvent(event: calendar.Event, volunteers: string[]): Promise<calendar.Event> {
   return calendar.update({
     calendarId: CALENDAR_ID, 
-    eventId: eventId, 
-    requestBody: patchEvent(volunteers),
+    eventId: event.id, 
+    requestBody: patchEvent(event, volunteers),
     sendNotifications: SEND_NOTIFICATIONS,
   });
 }
@@ -118,7 +118,7 @@ async function removeEvent(event: calendar.Event, dryRun: boolean): Promise<void
 }      
 
 function newEvent(date: moment.Moment, volunteers: string[]): calendar.Event {
-  const partial = patchEvent(volunteers);
+  const partial = patchEvent({}, volunteers);
   return {
     ...partial,
     location: EVENT_LOCATION,
@@ -137,16 +137,16 @@ function newEvent(date: moment.Moment, volunteers: string[]): calendar.Event {
   }
 }
 
-function patchEvent(volunteers: string[]): calendar.Event {
-  return {
-    summary: `${EVENT_TITLE} (${volunteers.join(' | ')})`,
-    attendees: volunteers.map(attendee).filter(a => !!a),
-    extendedProperties: {
-      private: {
-        volunteers: JSON.stringify(volunteers),
-      },
+function patchEvent(event: calendar.Event, volunteers: string[]): calendar.Event {
+  const summary = `${EVENT_TITLE} (${volunteers.join(' | ')})`;
+  const attendees = volunteers.filter(v => !!EMAILS[v])
+                              .map(v => event.attendees && event.attendees.find(a => a.email === EMAILS[v]) || attendee(v));
+  const extendedProperties = {
+    private: {
+      volunteers: JSON.stringify(volunteers),
     },
   };
+  return { summary, attendees, extendedProperties };
 }
 
 function startTime(date: moment.Moment): moment.Moment {
