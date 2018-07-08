@@ -10,8 +10,8 @@ Run `npm install` to install dependencies.
 
 Follow the linked instructions to enable both the [Google Calendar](https://developers.google.com/google-apps/calendar/quickstart/nodejs) and [Google Sheets](https://developers.google.com/sheets/api/quickstart/nodejs) APIs, including replacing the `client_secret.json` file with your own client secret.
 
-Edit `environment/environment.ts` to configure the locations of your Google calendar and spreadsheet and other
-aspects of the application.
+Edit [environment.ts](src/environment/environment.ts) to configure the locations of your Google calendar and spreadsheet
+and other aspects of the application.
 
 Tested on node 10.3.0.
 
