@@ -1,6 +1,6 @@
 {
   "name": "google-sheets-calendar-connector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Updates a Google calendar with events from a Google sheet.",
   "main": "calendar.js",
   "dependencies": {
