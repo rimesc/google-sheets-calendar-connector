@@ -16,12 +16,12 @@ interface TableRow {
   volunteers: string[];
 }
 
-export async function run(dryRun: boolean): Promise<void> {
+export async function run(force: boolean, dryRun: boolean): Promise<void> {
   console.log(moment().toLocaleString());
   await authorize();
   const rows = await loadTable();
   const events = await loadEvents();
-  await Promise.all(rows.map(row => processRow(row, events, dryRun)));
+  await Promise.all(rows.map(row => processRow(row, events, force, dryRun)));
   await Promise.all(events.map(event => removeEvent(event, dryRun)));
 }
 
@@ -66,10 +66,10 @@ async function clearEvents(): Promise<void[]> {
   return Promise.all(events.items.map(e => calendar.remove({calendarId: CALENDAR_ID, eventId: e.id})));
 }
 
-async function processRow(row: TableRow, events: calendar.Event[], dryRun: boolean): Promise<void> {
+async function processRow(row: TableRow, events: calendar.Event[], force: boolean, dryRun: boolean): Promise<void> {
   const event = findMatchingEvent(events, row);
   if (event) {
-    if (!sameVolunteers(row, event)) {
+    if (force || !sameVolunteers(row, event)) {
       if (!dryRun) await updateEvent(event, row.volunteers);
       console.debug('Updated event on ' + row.date.format('YYYY-MM-DD') + ' with ' + row.volunteers);
     }
