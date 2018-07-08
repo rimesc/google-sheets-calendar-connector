@@ -46,7 +46,7 @@ export namespace calendar {
    * Wraps Calendar.delete(params, callback) in an async function.
    */
   export async function remove(params: DeleteEventParams): Promise<void> {
-    const foo = doCall(responseHandler => calendar.events.delete(params, responseHandler));
+    doCall(responseHandler => calendar.events.delete(params, responseHandler));
   }
 
 }
