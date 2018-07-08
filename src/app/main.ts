@@ -86,7 +86,7 @@ function findMatchingEvent(events: calendar.Event[], row: TableRow): calendar.Ev
 }
 
 function sameVolunteers(row: TableRow, event: calendar.Event): boolean {
-  const eventVolunteers = event.extendedProperties.private.volunteers.split(',') as string[];
+  const eventVolunteers = JSON.parse(event.extendedProperties.private.volunteers) as string[];
   return eventVolunteers.length === row.volunteers.length && eventVolunteers.every((v, i) => v === row.volunteers[i]);
 }
 
@@ -143,7 +143,7 @@ function patchEvent(volunteers: string[]): calendar.Event {
     attendees: volunteers.map(attendee).filter(a => !!a),
     extendedProperties: {
       private: {
-        volunteers: volunteers.join(','),
+        volunteers: JSON.stringify(volunteers),
       },
     },
   };
