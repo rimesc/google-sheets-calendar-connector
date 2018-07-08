@@ -31,5 +31,5 @@
     "url": "git+https://crimes@bitbucket.org/crimes/google-sheets-calendar-connector.git"
   },
   "author": "Chris Rimes",
-  "license": "ISC"
+  "license": "Apache-2.0"
 }
