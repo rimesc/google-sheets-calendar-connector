@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://crimes@bitbucket.org/crimes/google-sheets-calendar-connector.git"
+    "url": "https://github.com/rimesc/google-sheets-calendar-connector.git"
   },
   "author": "Chris Rimes",
   "license": "Apache-2.0"
