@@ -14,8 +14,18 @@ const limiter = new Bottleneck({
 /** Equivalent to BodyResponseCallback<T>. */
 type ResponseHandler<T> = (err: Error | null, res?: AxiosResponse<T> | null) => void;
 
-function rateLimitExceeded(error: Error & {code: number, errors: {reason: string}[]}): boolean {
-  return error.code == 403 && error.errors.some(err => err.reason === 'rateLimitExceeded')
+type ApiError = Error & {code: number | string, errors?: {reason: string}[]};
+
+function recoverableError(error: ApiError): boolean {
+  return rateLimitExceeded(error) || addressNotFound(error);
+}
+
+function rateLimitExceeded(error: ApiError): boolean {
+  return error.code == 403 && error.errors && error.errors.some(err => err.reason === 'rateLimitExceeded')
+}
+
+function addressNotFound(error: ApiError): boolean {
+  return error.code == 'ENOTFOUND';
 }
 
 /**
@@ -42,7 +52,7 @@ function withBackoff(call: (responseHandler: ResponseHandler<any>) => void, call
     maxDelay: 1000,
   });
   backoffCall.setStrategy(strategy);
-  backoffCall.retryIf(rateLimitExceeded);
+  backoffCall.retryIf(recoverableError);
   backoffCall.failAfter(10);
   return backoffCall;
 }
