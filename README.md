@@ -27,7 +27,7 @@ in the console.  The credentials are save to disk and re-used for future runs.
 
 ## Installation ##
 
-Run `npm install -g` to install the application globally.  This will add a `google-sheets-calendar-connector` executable to the path.
+Run `npm install -g $(npm pack | tail -1)` to install the application globally.  This will add a `google-sheets-calendar-connector` executable to the path.
 
 You can use the `TOKEN_DIR` environment variable to control where the API token is stored.
 

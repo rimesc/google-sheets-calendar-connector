@@ -1,0 +1,11 @@
+/node_modules
+/src
+*.plist
+*.log
+*.tgz
+Dockerfile
+tsconfig.json
+.dockerignore
+.eslintrc.yaml
+.DS_Store
+Thumbs.db
