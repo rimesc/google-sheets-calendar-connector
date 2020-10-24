@@ -2,7 +2,7 @@
  * Utilities for makng async API calls, with rate limiting and backoff.
  */
 
-import { AxiosResponse } from 'axios';
+import { GaxiosResponse } from 'gaxios';
 import Bottleneck from "bottleneck"
 import * as backoff from "backoff";
 
@@ -12,7 +12,7 @@ const limiter = new Bottleneck({
 });
 
 /** Equivalent to BodyResponseCallback<T>. */
-type ResponseHandler<T> = (err: Error | null, res?: AxiosResponse<T> | null) => void;
+type ResponseHandler<T> = (err: Error | null, res?: GaxiosResponse<T> | null) => void;
 
 type ApiError = Error & {code: number | string, errors?: {reason: string}[]};
 
