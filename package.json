@@ -10,11 +10,11 @@
     "@types/backoff": "^2.5.0",
     "@types/moment": "^2.13.0",
     "@types/moment-timezone": "^0.5.6",
-    "@types/node": "^10.3.4",
+    "@types/node": "^14.14.2",
     "@types/yargs": "^11.0.0",
     "backoff": "^2.5.0",
     "bottleneck": "^2.5.1",
-    "google-auth-library": "1.6.1",
+    "google-auth-library": "3.1.2",
     "googleapis": "39.1.0",
     "moment": "2.22.2",
     "moment-timezone": "^0.5.20",
@@ -22,7 +22,7 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "typescript": "^2.9.2"
+    "typescript": "^3.2.0"
   },
   "scripts": {
     "build": "tsc",

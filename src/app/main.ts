@@ -50,7 +50,7 @@ async function loadTable(): Promise<TableRow[]> {
 async function loadEvents(): Promise<calendar.Event[]> {
   return calendar.list({
     calendarId: CALENDAR_ID,
-    privateExtendedProperty: `createdBy=${CREATED_BY}`,
+    privateExtendedProperty: [`createdBy=${CREATED_BY}`],
     orderBy: 'startTime',
     singleEvents: true,
   }).then(events => events.items);
@@ -59,7 +59,7 @@ async function loadEvents(): Promise<calendar.Event[]> {
 async function clearEvents(): Promise<void[]> {
   const request = {
     calendarId: CALENDAR_ID,
-    privateExtendedProperty: `createdBy=${CREATED_BY}`,
+    privateExtendedProperty: [`createdBy=${CREATED_BY}`],
     singleEvents: true,
   };
   const events = await calendar.list(request);
