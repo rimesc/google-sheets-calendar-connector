@@ -1,0 +1,28 @@
+{
+  "spreadsheet": {
+    "id": "eXaMplE1aBC-aBcdefGHIjklm1nOpQrsTUvwxYZAbcDe",
+    "dateRange": "Sheet1!A2:A100",
+    "volunteerRanges": ["Sheet1!AA2:AA100", "Sheet1!AB2:AB100"]
+  },
+  "calendar": {
+    "id": "example1234567890abcdefghi@group.calendar.google.com",
+    "events": {
+      "title": "My Event",
+      "location": "Event Centre\nSome Street, Any Town, ANY1 1SS",
+      "createdBy": "My Organisation",
+      "start": {
+        "hours": 10,
+        "minutes": 30
+      },
+      "duration": {
+        "hours": 1
+      }
+    }
+  },
+  "emails": {
+    "me": "me@example.com",
+    "you": "you@example.org"
+  },
+  "sendNotifications": true
+}
+

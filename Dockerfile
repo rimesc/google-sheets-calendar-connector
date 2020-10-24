@@ -6,4 +6,4 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 RUN npm install
 RUN npm run build
-CMD [ "node", "dist/app/cli.js" ]
+CMD [ "node", "dist/cli.js" ]

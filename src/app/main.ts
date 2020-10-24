@@ -3,13 +3,8 @@
 
 import * as moment from 'moment-timezone';
 
-import {
-  CALENDAR_ID, SPREADSHEET_ID,
-  DATE_RANGE, VOLUNTEER_RANGES,
-  EVENT_TITLE, EVENT_DURATION, EVENT_START, EVENT_LOCATION,
-  CREATED_BY, EMAILS, SEND_NOTIFICATIONS,
-} from '../environment/environment';
 import { authorize, calendar, sheets } from './api';
+import { config } from "./config";
 
 interface TableRow {
   date: moment.Moment;
@@ -33,8 +28,8 @@ export async function clear(dryRun: boolean): Promise<void> {
 
 async function loadTable(): Promise<TableRow[]> {
   const request = {
-    spreadsheetId: SPREADSHEET_ID,
-    ranges: [ DATE_RANGE, ...VOLUNTEER_RANGES ] as any,
+    spreadsheetId: config.spreadsheet.id,
+    ranges: [ config.spreadsheet.dateRange, ...config.spreadsheet.volunteerRanges ] as any,
     majorDimension: 'COLUMNS'
   };
   const data = await sheets.get(request);
@@ -49,8 +44,8 @@ async function loadTable(): Promise<TableRow[]> {
 
 async function loadEvents(): Promise<calendar.Event[]> {
   return calendar.list({
-    calendarId: CALENDAR_ID,
-    privateExtendedProperty: [`createdBy=${CREATED_BY}`],
+    calendarId: config.calendar.id,
+    privateExtendedProperty: [`createdBy=${config.calendar.events.createdBy}`],
     orderBy: 'startTime',
     singleEvents: true,
   }).then(events => events.items);
@@ -58,12 +53,12 @@ async function loadEvents(): Promise<calendar.Event[]> {
 
 async function clearEvents(): Promise<void[]> {
   const request = {
-    calendarId: CALENDAR_ID,
-    privateExtendedProperty: [`createdBy=${CREATED_BY}`],
+    calendarId: config.calendar.id,
+    privateExtendedProperty: [`createdBy=${config.calendar.events.createdBy}`],
     singleEvents: true,
   };
   const events = await calendar.list(request);
-  return Promise.all(events.items.map(e => calendar.remove({calendarId: CALENDAR_ID, eventId: e.id})));
+  return Promise.all(events.items.map(e => calendar.remove({calendarId: config.calendar.id, eventId: e.id})));
 }
 
 async function processRow(row: TableRow, events: calendar.Event[], force: boolean, dryRun: boolean): Promise<void> {
@@ -92,27 +87,27 @@ function sameVolunteers(row: TableRow, event: calendar.Event): boolean {
 
 async function addEvent(date: moment.Moment, volunteers: string[]): Promise<calendar.Event> {
   return calendar.insert({
-    calendarId: CALENDAR_ID,
+    calendarId: config.calendar.id,
     requestBody: newEvent(date, volunteers),
-    sendNotifications: SEND_NOTIFICATIONS,
+    sendNotifications: config.sendNotifications,
   });
 }
 
 async function updateEvent(event: calendar.Event, volunteers: string[]): Promise<calendar.Event> {
   return calendar.update({
-    calendarId: CALENDAR_ID, 
+    calendarId: config.calendar.id, 
     eventId: event.id, 
     requestBody: patchEvent(event, volunteers),
-    sendNotifications: SEND_NOTIFICATIONS,
+    sendNotifications: config.sendNotifications,
   });
 }
 
 async function removeEvent(event: calendar.Event, dryRun: boolean): Promise<void> {
   if (!dryRun) await calendar.update({
-    calendarId: CALENDAR_ID,
+    calendarId: config.calendar.id,
     eventId: event.id,
     requestBody: {status: 'cancelled'},
-    sendNotifications: SEND_NOTIFICATIONS,
+    sendNotifications: config.sendNotifications,
   });
   console.debug('Cancelled event on ' + moment(event.start.dateTime).format('YYYY-MM-DD'));
 }      
@@ -121,26 +116,26 @@ function newEvent(date: moment.Moment, volunteers: string[]): calendar.Event {
   const partial = patchEvent({}, volunteers);
   return {
     ...partial,
-    location: EVENT_LOCATION,
+    location: config.calendar.events.location,
     start: {
       dateTime: startTime(date).toISOString()
     },
     end: {
-      dateTime: startTime(date).add(EVENT_DURATION).toISOString()
+      dateTime: startTime(date).add(config.calendar.events.duration).toISOString()
     },
     extendedProperties: {
       private: {
         ...partial.extendedProperties.private,
-        createdBy: CREATED_BY,
+        createdBy: config.calendar.events.createdBy,
       },
     },
   }
 }
 
 function patchEvent(event: calendar.Event, volunteers: string[]): calendar.Event {
-  const summary = `${EVENT_TITLE} (${volunteers.join(' | ')})`;
-  const attendees = volunteers.filter(v => !!EMAILS[v])
-                              .map(v => event.attendees && event.attendees.find(a => a.email === EMAILS[v]) || attendee(v));
+  const summary = `${config.calendar.events.title} (${volunteers.join(' | ')})`;
+  const attendees = volunteers.filter(v => !!config.emails[v])
+                              .map(v => event.attendees && event.attendees.find(a => a.email === config.emails[v]) || attendee(v));
   const extendedProperties = {
     private: {
       volunteers: JSON.stringify(volunteers),
@@ -150,10 +145,10 @@ function patchEvent(event: calendar.Event, volunteers: string[]): calendar.Event
 }
 
 function startTime(date: moment.Moment): moment.Moment {
-  return moment.tz(date, 'Europe/London').set(EVENT_START);
+  return moment.tz(date, 'Europe/London').set(config.calendar.events.start);
 }
 
 function attendee(initials: string): calendar.Attendee | undefined {
-  return EMAILS[initials] && { displayName: initials, email: EMAILS[initials] };
+  return config.emails[initials] && { displayName: initials, email: config.emails[initials] };
 }
 

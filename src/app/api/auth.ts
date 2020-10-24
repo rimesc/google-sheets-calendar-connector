@@ -6,14 +6,13 @@ import * as googleAuth from 'google-auth-library';
 import * as readline from 'readline';
 import * as fs from 'fs';
 
+import { credentials } from '../config'
+
 // If modifying these scopes, delete your previously saved credentials
 const SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/spreadsheets.readonly'];
 const TOKEN_DIR = process.env.TOKEN_DIR ||
   ((process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/');
 const TOKEN_PATH = TOKEN_DIR + 'google-apis.json';
-
-// Load client secrets from a local file.
-const credentials = JSON.parse(fs.readFileSync('client_secret.json').toString());
 
 /**
  * Initialize an OAuth2 client, either using stored credentials or prompting

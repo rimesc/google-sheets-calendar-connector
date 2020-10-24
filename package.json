@@ -26,8 +26,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/app/cli.js",
-    "dry-run": "tsc && node dist/app/cli.js --dry-run"
+    "start": "tsc && node dist/cli.js",
+    "dry-run": "tsc && node dist/cli.js --dry-run"
   },
   "repository": {
     "type": "git",
